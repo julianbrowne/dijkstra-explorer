@@ -79,6 +79,7 @@
         };
 
         function findRoute() { 
+            d3.selectAll("line").classed({"shortest": false});
             calculateDistances();
             if(fromInput.options[fromInput.selectedIndex]===undefined||toInput.options[toInput.selectedIndex]===undefined) return;
             var fromNode = fromInput.options[fromInput.selectedIndex].value;
@@ -212,6 +213,31 @@
                     .attr("y2", function(d) { return data.nodes[d.to].y;   });
 
             lines.exit().remove();
+
+/**
+        var elements = svg.selectAll("g");
+
+        var elementsPathData = elements.data(paths);
+
+        var pathsEnter = elementsPathData
+            .enter()
+                .append("g");
+
+        pathsEnter
+            .append("line")
+                .attr("x1", function(d) { return nodes[d.from].x; })
+                .attr("y1", function(d) { return nodes[d.from].y; })
+                .attr("x2", function(d) { return nodes[d.to].x; })
+                .attr("y2", function(d) { return nodes[d.to].y; })
+
+        pathsEnter
+            .append("text")
+                .attr("x", function(d) { return parseInt( (nodes[d.from].x+nodes[d.to].x)/2 ) + 5; })
+                .attr("y", function(d) { return parseInt( (nodes[d.from].y+nodes[d.to].y)/2 ) - 5; })
+                .attr("class", "line-label")
+                .text(function(d,i) { return distances[d.from][d.to]; });
+**/
+
 
         };
 
