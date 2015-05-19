@@ -4,6 +4,10 @@
 - Download all files into a directory
 - Open index.html in a modern browser
 
+or
+
+just [try it out](http://julianbrowne.github.io/dijkstra-explorer/)
+
 ## Instructions
 
 - double-click to add nodes
