@@ -9,8 +9,17 @@ var data = {
         selectedNode: null,
         fromNode: null,
         toNode: null
+    },
+    ui: { 
+        inputSelectSourceNode: "#from",
+        inputSelectTargetNode: "#to"
     }
 };
+
+var dragManager = d3.behavior.drag()
+    .on('dragstart', dragNodeStart())
+    .on('drag', dragNode())
+    .on('dragend', dragNodeEnd());
 
 $(function() { 
 
@@ -25,6 +34,8 @@ $(function() {
         .on("contextmenu", function() { d3.event.preventDefault(); })
         .on("dblclick", addNode);
 
+    updateStats();
+
 });
 
 function nullEventHandler(name) { 
@@ -36,12 +47,10 @@ function nullEventHandler(name) {
 function findRoute() { 
     d3.selectAll("line").classed({"shortest": false});
     calculateDistances();
-    var fromInput = document.getElementById("from");
-    var toInput = document.getElementById("to");
-    if(fromInput.options[fromInput.selectedIndex]===undefined||toInput.options[toInput.selectedIndex]===undefined) return;
-    var fromNode = fromInput.options[fromInput.selectedIndex].value;
-    var toNode = toInput.options[toInput.selectedIndex].value;
-    var results = dijkstra(fromNode, toNode);
+    if(!$(data.ui.inputSelectSourceNode).val()||!$(data.ui.inputSelectTargetNode).val()) return;
+    var sourceNode = $(data.ui.inputSelectSourceNode).val();
+    var targetNode = $(data.ui.inputSelectTargetNode).val();
+    var results  = dijkstra(sourceNode, targetNode);
     printResults(results);
 };
 
@@ -62,7 +71,6 @@ function printResults(results) {
                 "line.from" + step.source + "to" + step.target + ","
               + "line.from" + step.target + "to" + step.source
             );
-            console.log(stepLine);
             stepLine.classed({"shortest": true});
             pathList.appendChild(stepItem);
         });
@@ -78,50 +86,46 @@ function printResults(results) {
 function addNode() { 
     if (d3.event.defaultPrevented) return;
     var position = d3.mouse(this);
-    info("Adding node "+data.nodes.length);
+    var nodeName = data.nodes.length;
+    info("Adding node " + nodeName);
     data.nodes.push({ 
-        name: data.nodes.length,
+        name: nodeName,
         x: parseInt(position[0]), 
         y: parseInt(position[1])
     });
     redrawNodes();
-    addNodesToOption();
+    addNodeToSelect(nodeName);
     updateStats('node-count', data.nodes.length);
 };
 
-function updateStats(id, value) { 
-    $("#"+id).html(value);
-};
-
-function info(text) {
+function info(text) { 
     $("#info").html(text);
 };
 
-function addNodesToOption() { 
-    var fromInput = document.getElementById("from");
-    var toInput = document.getElementById("to");
-    empty(fromInput);
-    empty(toInput);
-    data.nodes.forEach(function(node) { 
-        var fromOption = document.createElement("option");
-        fromOption.text = node.name;
-        fromInput.add(fromOption);
-        var toOption = document.createElement("option");
-        toOption.text = node.name;
-        toInput.add(toOption);
-    });
-};
-
-function empty(element) { 
-    while (element.hasChildNodes()) element.removeChild(element.lastChild);
+function addNodeToSelect(nodeName) { 
+    $(data.ui.inputSelectSourceNode).append($("<option></option>").attr("value",nodeName).text(nodeName));
+    $(data.ui.inputSelectTargetNode).append($("<option></option>").attr("value",nodeName).text(nodeName));
 };
 
 function clearGraph() { 
-    console.log("clearing graph");
+    info("cleared graph");
     data.nodes = [];
     data.paths = [];
+    cleanUI();
     redrawNodes();
     redrawLines();
+    updateStats();
+};
+
+function updateStats() { 
+    $("#node-count").html(data.nodes.length);
+    $("#path-count").html(data.paths.length);
+};
+
+function cleanUI() {
+    $(data.ui.inputSelectSourceNode).empty();
+    $(data.ui.inputSelectTargetNode).empty();
+    $("#results").empty();
 };
 
 function redrawNodes() { 
@@ -207,7 +211,7 @@ function redrawLines() {
 
     elements.exit().remove();
 
-    updateStats('path-count', data.paths.length);
+    updateStats();
 };
 
 function nodeClick(d,i) { 
@@ -216,11 +220,6 @@ function nodeClick(d,i) {
     d3.event.preventDefault();
     d3.event.stopPropagation();
 };
-
-var dragManager = d3.behavior.drag()
-    .on('dragstart', dragNodeStart())
-    .on('drag', dragNode())
-    .on('dragend', dragNodeEnd());
 
 function dragNodeStart() { 
     return function(d, i) { 
@@ -299,7 +298,7 @@ function calculateDistances() {
 
     /** calculate distances **/
 
-    for (var i=0; i<data.paths.length; i++) { 
+    for(var i=0; i<data.paths.length; i++) { 
 
         var sourceNodeId = parseInt(data.paths[i].from);
         var targetNodeId = parseInt(data.paths[i].to);
@@ -315,7 +314,18 @@ function calculateDistances() {
         data.distances[sourceNodeId][targetNodeId] = distance;
         data.distances[targetNodeId][sourceNodeId] = distance;
     };
-    //updateStats('distances-table', JSON.stringify(data.distances));
+
+    $('#distances-table').append("<table></table>");
+
+    <tr><td>' + 'result' +  i + '</td></tr>' );
+
+    for(var i=0; i<data.distances.length; i++) { 
+        for(var j=0; j<data.nodes.length;j++) { 
+
+        };
+    };
+
+    
 };
 
 function dijkstra(start, end) { 
