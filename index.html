@@ -32,58 +32,83 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3">
-                <div class="well">
-                    <h4>routing</h4>
-                    <form>
-                        <div class="form-group">
-                            <label for="from">from</label>
-                            <select id="from" class="form-control"></select>
+            <div role="tabpanel">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#graph-tab" aria-controls="home" role="tab" data-toggle="tab">graph</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#data-tab" aria-controls="profile" role="tab" data-toggle="tab">data</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="graph-tab">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="well">
+                                    <h4>routing</h4>
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="from">from</label>
+                                            <select id="from" class="form-control"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="to">to</label>
+                                            <select id="to" class="form-control"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-warning" data-toggle="tooltip" 
+                                            data-placement="right" title="find shortest path between nodes" 
+                                            onclick="clearGraph()">clear</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" 
+                                            data-placement="right" title="find shortest path between nodes" 
+                                            onclick="findRoute()">route</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="results well">
+                                    <table class="table">
+                                        <tr>
+                                            <th class="info">nodes</th>
+                                            <td id="node-count">-</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="info">paths</th>
+                                            <td id="path-count">-</td>
+                                        </tr>
+                                    </table>
+                                    <div id="results" class="well"></div>
+                                </div>
+                                <div class="well">
+                                    <h4>Instructions</h4>
+                                    <ul>
+                                        <li>double-click to add a node</li>
+                                        <li>drag nodes to reposition them</li>
+                                        <li>right-click on a nodem then right-click on another to link them</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div id="graph"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="to">to</label>
-                            <select id="to" class="form-control"></select>
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                            data-placement="right" title="find shortest path between nodes" 
-                            onclick="clearGraph()">clear</button>
-                            <button type="button" class="btn btn-primary" data-toggle="tooltip" 
-                            data-placement="right" title="find shortest path between nodes" 
-                            onclick="findRoute()">route</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="results well">
-                    <table class="table">
-                        <tr>
-                            <th class="info">nodes</th>
-                            <td id="node-count">-</td>
-                        </tr>
-                        <tr>
-                            <th class="info">paths</th>
-                            <td id="path-count">-</td>
-                        </tr>
-                    </table>
-                    <div id="results" class="well"></div>
-                </div>
-                <div class="well">
-                    <h4>Instructions</h4>
-                    <ul>
-                        <li>double-click to add a node</li>
-                        <li>drag nodes to reposition them</li>
-                        <li>right-click on a nodem then right-click on another to link them</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div id="graph"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="data-tab">
+                        <div id="distances-table"></div>
                     </div>
                 </div>
             </div>
+
+        </div><!-- /rows -->
+    </div><!-- /container -->
+    <footer class="footer">
+        <div class="panel-footer text-center">
+            Want the code? <a href="https://github.com/julianbrowne/dijkstra-explorer">https://github.com/julianbrowne/dijkstra-explorer</a>
         </div>
-    </div>
+    </footer>
 </body>
 </html>

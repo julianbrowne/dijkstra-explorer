@@ -126,12 +126,14 @@ function clearGraph() {
 
 function redrawNodes() { 
 
-    svg.selectAll("g").data([]).exit().remove();
+    svg.selectAll("g.nodes").data([]).exit().remove();
 
-    var elements = svg.selectAll("g")
+    var elements = svg.selectAll("g.nodes")
         .data(data.nodes, function(d,i) { return d.name; });
 
-    var nodesEnter = elements.enter().append("g");
+    var nodesEnter = elements.enter()
+        .append("g")
+            .attr("class", "nodes");
 
     elements.attr("transform", function(d,i) { 
         return "translate("+d.x+","+d.y+")";
@@ -166,49 +168,46 @@ function redrawNodes() {
 
 function redrawLines() { 
 
-    svg.selectAll("line").data([]).exit().remove();
+    /** clear away old lines first **/
 
-    var lines = svg.selectAll("line")
-        .data(data.paths);
+    svg.selectAll("g.line").data([]).exit().remove();
 
-    lines.enter()
-        .append("line")
-            .attr("class", function(d) { return "from"+data.nodes[d.from].name+"to"+data.nodes[d.to].name })
-            .attr("x1", function(d) { return data.nodes[d.from].x; })
-            .attr("y1", function(d) { return data.nodes[d.from].y; })
-            .attr("x2", function(d) { return data.nodes[d.to].x;   })
-            .attr("y2", function(d) { return data.nodes[d.to].y;   });
+    var elements = svg
+        .selectAll("g.line")
+        .data(data.paths, function(d){ return d.id });
 
-    lines.exit().remove();
+    var newElements = elements.enter();
+
+    /** new lines **/
+
+    var group = newElements
+        .append("g")
+            .attr("class", "line");
+
+    var line = group.append("line")
+        .attr("class", function(d) { return "from"+data.nodes[d.from].name+"to"+data.nodes[d.to].name })
+        .attr("x1", function(d) { return data.nodes[d.from].x; })
+        .attr("y1", function(d) { return data.nodes[d.from].y; })
+        .attr("x2", function(d) { return data.nodes[d.to].x;   })
+        .attr("y2", function(d) { return data.nodes[d.to].y;   });
+
+    /** new line labels **/
+
+    var text = group.append("text")
+        .attr("x", function(d) { return parseInt( (data.nodes[d.from].x+data.nodes[d.to].x)/2 ) + 5; })
+        .attr("y", function(d) { return parseInt( (data.nodes[d.from].y+data.nodes[d.to].y)/2 ) - 5; })
+        .attr("class", "line-label");
+
+    /** updated line labels **/
+
+    elements.selectAll("text")
+        .text(function(d) { return data.distances[d.from][d.to]; });
+
+    /** defunct lines **/
+
+    elements.exit().remove();
 
     updateStats('path-count', data.paths.length);
-
-
-/**
-var elements = svg.selectAll("g");
-
-var elementsPathData = elements.data(paths);
-
-var pathsEnter = elementsPathData
-    .enter()
-        .append("g");
-
-pathsEnter
-    .append("line")
-        .attr("x1", function(d) { return nodes[d.from].x; })
-        .attr("y1", function(d) { return nodes[d.from].y; })
-        .attr("x2", function(d) { return nodes[d.to].x; })
-        .attr("y2", function(d) { return nodes[d.to].y; })
-
-pathsEnter
-    .append("text")
-        .attr("x", function(d) { return parseInt( (nodes[d.from].x+nodes[d.to].x)/2 ) + 5; })
-        .attr("y", function(d) { return parseInt( (nodes[d.from].y+nodes[d.to].y)/2 ) - 5; })
-        .attr("class", "line-label")
-        .text(function(d,i) { return distances[d.from][d.to]; });
-**/
-
-
 };
 
 function nodeClick(d,i) { 
@@ -240,6 +239,7 @@ function dragNode() {
         };
         info("node "+i+" at ["+parseInt(position[0])+","+parseInt(position[1])+"]");
         data.nodes[i] = nodeDatum;
+        calculateDistances();
         redrawLines();
         redrawNodes();
     }
@@ -273,10 +273,12 @@ function startEndPath(index) {
         info("setting join from "+data.state.fromNode+" to "+index);
         data.state.toNode = index;
         var pathDatum = { 
+            id: data.paths.length,
             from: data.state.fromNode, 
             to: index
         };
         data.paths.push(pathDatum);
+        calculateDistances();
         redrawLines();
         redrawNodes();
         data.state.fromNode = null;
@@ -306,14 +308,14 @@ function calculateDistances() {
 
         /** pythagoras **/
 
-        xDistance = Math.abs(sourceNode.x - targetNode.x);
-        yDistance = Math.abs(sourceNode.y - targetNode.y);
-        distance = parseInt(Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2)));
+        var xDistance = Math.abs(sourceNode.x - targetNode.x);
+        var yDistance = Math.abs(sourceNode.y - targetNode.y);
+        var distance = parseInt(Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2)));
 
         data.distances[sourceNodeId][targetNodeId] = distance;
         data.distances[targetNodeId][sourceNodeId] = distance;
     };
-    console.log(data.distances);
+    //updateStats('distances-table', JSON.stringify(data.distances));
 };
 
 function dijkstra(start, end) { 
