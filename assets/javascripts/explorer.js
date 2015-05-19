@@ -169,6 +169,8 @@ function redrawNodes() {
 
     elements.exit().remove();
 
+    $("#nodes-table").html(drawDataTable(data.nodes));
+
 };
 
 function redrawLines() { 
@@ -211,6 +213,8 @@ function redrawLines() {
     /** defunct lines **/
 
     elements.exit().remove();
+
+    $("#paths-table").html(drawDataTable(data.paths));
 
     updateStats();
 };
@@ -284,6 +288,47 @@ function startEndPath(index) {
         data.state.fromNode = null;
         data.state.toNode = null;
     }
+};
+
+function drawDataTable(dataArray) { 
+
+    var table = $("<table></table>")
+        .addClass("table")
+        .addClass("table-bordered")
+        .addClass("table-condensed")
+        .addClass("auto-width");
+
+    var sample = dataArray[0];
+
+    var headerRow = $("<tr></tr>");
+
+    var columns = [];
+
+    for(var column in sample) { 
+        columns.push(column);
+        var cell = $("<th></th>");
+        cell.addClass("text-center")
+        cell.addClass("info");
+        cell.addClass("col-md-1");
+        cell.html(column);
+        cell.appendTo(headerRow);
+    }
+
+    headerRow.appendTo(table);
+
+    dataArray.forEach(function(item) { 
+        var normalRow = $("<tr></tr>");
+        columns.forEach(function(column) { 
+            var cell = $("<td></td>");
+            cell.addClass("text-center")
+            cell.addClass("col-md-1");
+            cell.html(item[column]);
+            cell.appendTo(normalRow);
+        });
+        normalRow.appendTo(table);
+    });
+
+    return table;
 };
 
 function calculateDistances() { 
