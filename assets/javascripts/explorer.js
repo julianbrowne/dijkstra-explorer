@@ -126,6 +126,7 @@ function cleanUI() {
     $(data.ui.inputSelectSourceNode).empty();
     $(data.ui.inputSelectTargetNode).empty();
     $("#results").empty();
+    $('#distances-table').empty();
 };
 
 function redrawNodes() { 
@@ -315,16 +316,49 @@ function calculateDistances() {
         data.distances[targetNodeId][sourceNodeId] = distance;
     };
 
-    $('#distances-table').append("<table></table>");
+    $('#distances-table').empty();
 
-    <tr><td>' + 'result' +  i + '</td></tr>' );
+    var table = $("<table></table>")
+        .addClass("table")
+        .addClass("table-bordered")
+        .addClass("table-condensed")
+        .addClass("auto-width");
 
-    for(var i=0; i<data.distances.length; i++) { 
-        for(var j=0; j<data.nodes.length;j++) { 
-
-        };
+    var headerRow = $("<tr></tr>");
+    var cell = $("<th>node</th>");
+    cell.addClass("text-center")
+    cell.addClass("info");
+    cell.appendTo(headerRow);
+    for(var th=0; th<data.nodes.length; th++) { 
+        var cell = $("<th></th>");
+        cell.addClass("text-center")
+        cell.addClass("info");
+        cell.addClass("col-md-1");
+        cell.html(th);
+        cell.appendTo(headerRow);
     };
+    headerRow.appendTo(table);
 
+    for(var source=0; source<data.distances.length; source++) { 
+        var normalRow = $("<tr></tr>");
+        for(var target=0; target<data.nodes.length;target++) { 
+            if(target===0) { 
+                var cell = $("<th></th>");
+                cell.addClass("text-center")
+                cell.addClass("info");
+                cell.addClass("col-md-1");
+                cell.html(source);
+                cell.appendTo(normalRow);
+            }
+            var cell = $("<td></td>");
+            cell.addClass("text-center")
+            cell.addClass("col-md-1");
+            cell.html(data.distances[source][target]);
+            cell.appendTo(normalRow);
+        };
+        normalRow.appendTo(table);
+    };
+    table.appendTo('#distances-table');
     
 };
 
