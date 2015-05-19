@@ -1,119 +1,23 @@
 
+body { 
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #797979;
+    background: #eeeeee;
+    font-family: helvetica;
+}
+
 .graph { 
-    border: 1px solid gray;
-    float: left;
-    margin: 50px;
     width: 1000px;
     /*background-image: url("../../assets/images/map.png");*/
     background-repeat: no-repeat;
     overflow: hidden;
 }
 
-.right { 
-    margin-left: 1050px;
-    margin-top: 55px;
-    padding: 10px;
-    overflow: auto;
-}
-
-.inputs { 
-    border: 1px solid #DEDEDE;
-    width: 300px;
-    text-align: right;
-    padding: 10px;
-    margin: 10px;
-}
-
-.results { 
-    font-family: helvetica;
-    border: 1px solid #DEDEDE;
-    margin: 20px 10px;
-    padding: 10px;
-    width: 300px;
-    text-align: left;
-}
-
-.danger { 
-    background-color: #FF0000;
-}
-
-button { 
-    box-shadow: inset 0px 1px 0px 0px #bbdaf7;
-    background-color: #79bbff;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    text-indent: 0;
-    border: 1px solid #84bbf3;
-    display: inline-block;
-    color: #000000;
-    font-family: Arial;
-    font-size: 20px;
-    font-style: normal;
-    height: 50px;
-    line-height: 30px;
-    width: 86px;
-    text-decoration: none;
-    text-align: center;
-    outline: none;
-    margin: 10px;
-}
-
-button:hover { 
-    background-color:#378de5;
-}
-
-button:active { 
-    position:relative;
-    top:1px;
-}
-
-h1 {
-    font-size: 30px;
-    font-family: arial;
-}
-
-.inputs label { 
-    font-size: 20px;
-    font-family: arial;
-    display: inline-block;
-    width: 50px;
-    text-align: right;
-    padding: 10px;
-}
-
-select { 
-    width: 80px;
-    direction: rtl;
-}
-
-circle { 
-    fill: #CCCCCC;
-    stroke: #2B2B2B;
-    stroke-width: 2;
-    cursor: pointer;
-}
-
-.label { 
-    font-family: arial;
-    stroke: #000000;
-    cursor: pointer;
-}
-
-line { 
-    stroke: #1E1E1E;
-    stroke-dasharray: 5,5;
-    stroke-width: 2;
-}
-
-line.shortest { 
-    stroke: #FF0000;
-    stroke-dasharray: 5,1;
-    stroke-width: 4;
-}
-
-.line-label { 
-    font-family: arial;
-    stroke: #000000;
+#results {
+    background: #FFFFFF;
 }

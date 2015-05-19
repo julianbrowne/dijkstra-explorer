@@ -1,0 +1,30 @@
+
+circle { 
+    fill: #61A4C2;
+    stroke: #141C25;
+    stroke-width: 1;
+    cursor: pointer;
+}
+
+.label { 
+    font-family: arial;
+    stroke: #000000;
+    cursor: pointer;
+}
+
+line { 
+    stroke: #1E1E1E;
+    stroke-dasharray: 5,5;
+    stroke-width: 2;
+}
+
+line.shortest { 
+    stroke: #FF0000;
+    stroke-dasharray: 5,1;
+    stroke-width: 4;
+}
+
+.line-label { 
+    font-family: arial;
+    stroke: #000000;
+}
