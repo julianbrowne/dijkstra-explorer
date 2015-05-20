@@ -7,6 +7,7 @@
     <title>Dijkstra Explorer</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" media="all" href="assets/bootstrap-3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="assets/bootstrap-3.3.4/css/bootstrap-docs.min.css"/>
     <link rel="stylesheet" type="text/css" media="all" href="assets/stylesheets/style.css"/>
     <link rel="stylesheet" type="text/css" media="all" href="assets/stylesheets/svg.css"/>
     <script type="text/javascript" src="assets/javascripts/jquery-1.9.1.js"></script>
@@ -102,13 +103,25 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="data-tab">
-                        <div class="container panel">
-                            <h3>nodes</h3>
-                            <div id="nodes-table"></div>
-                            <h3>paths</h3>
-                            <div id="paths-table"></div>
-                            <h3>distances</h3>
-                            <div id="distances-table"></div>
+                        <div class="panel">
+                            <div class="container">
+                                <div class="bs-callout borderless text-right">
+                                    <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
+                                        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+                                        export
+                                    </button>
+                                    <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
+                                        <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+                                        import
+                                    </button>
+                                </div><!-- /bs-callout -->
+                                <div class="bs-callout bs-callout-info padding-medium"><h4>nodes</h4></div>
+                                <div id="nodes-table"></div>
+                                <div class="bs-callout bs-callout-info padding-medium"><h4>paths</h4></div>
+                                <div id="paths-table"></div>
+                                <div class="bs-callout bs-callout-info padding-medium"><h4>distances</h4></div>
+                                <div id="distances-table"></div>
+                            </div><!-- /container -->
                         </div>
                     </div>
                 </div>
@@ -119,6 +132,10 @@
     <footer class="footer">
         <div class="panel-footer text-center">
             Want the code? <a href="https://github.com/julianbrowne/dijkstra-explorer">https://github.com/julianbrowne/dijkstra-explorer</a>
+
+
+            <p><a download="stuff.json" href='data:application/json,{"a":10}'>JSON</a></p>
+
         </div>
     </footer>
 </body>

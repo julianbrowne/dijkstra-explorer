@@ -34,9 +34,22 @@ $(function() {
         .on("contextmenu", function() { d3.event.preventDefault(); })
         .on("dblclick", addNode);
 
-    updateStats();
+    initUI();
 
 });
+
+function initUI() { 
+
+    updateStats();
+
+    var popovers = ".datamgr";
+
+    $(popovers).popover({ 
+        delay: { show: 400, hide: 300 },
+        trigger: "hover"
+    });
+
+};
 
 function nullEventHandler(name) { 
     return function() { 
@@ -308,7 +321,7 @@ function drawDataTable(dataArray) {
         columns.push(column);
         var cell = $("<th></th>");
         cell.addClass("text-center")
-        cell.addClass("info");
+        cell.addClass("bg-muted");
         cell.addClass("col-md-1");
         cell.html(column);
         cell.appendTo(headerRow);
@@ -372,12 +385,12 @@ function calculateDistances() {
     var headerRow = $("<tr></tr>");
     var cell = $("<th>node</th>");
     cell.addClass("text-center")
-    cell.addClass("info");
+    cell.addClass("bg-muted");
     cell.appendTo(headerRow);
     for(var th=0; th<data.nodes.length; th++) { 
         var cell = $("<th></th>");
         cell.addClass("text-center")
-        cell.addClass("info");
+        cell.addClass("bg-muted");
         cell.addClass("col-md-1");
         cell.html(th);
         cell.appendTo(headerRow);
@@ -390,7 +403,7 @@ function calculateDistances() {
             if(target===0) { 
                 var cell = $("<th></th>");
                 cell.addClass("text-center")
-                cell.addClass("info");
+                cell.addClass("bg-muted");
                 cell.addClass("col-md-1");
                 cell.html(source);
                 cell.appendTo(normalRow);

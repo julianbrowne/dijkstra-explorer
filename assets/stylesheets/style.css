@@ -11,6 +11,8 @@ body {
     font-family: helvetica;
 }
 
+button:focus {outline:0 !important;}
+
 .graph { 
     width: 1000px;
     /*background-image: url("../../assets/images/map.png");*/
@@ -24,4 +26,17 @@ body {
 
 .auto-width {
     width: auto !important;
+}
+
+.borderless { 
+    border:none !important;
+}
+
+.padding-medium { 
+    padding: 10px !important;
+}
+
+.bg-muted { 
+    color: #4A4A4A;
+    background: rgba(172, 172, 172, 0.51);
 }
