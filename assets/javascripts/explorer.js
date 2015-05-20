@@ -28,7 +28,7 @@ $(function() {
     svg = graph.append("svg:svg")
         .attr("id", "svg")
         .attr("class", "graph")
-        .attr("width", 1000)
+        .attr("width", 800)
         .attr("height", 800)
         .on("click", nullEventHandler("svg:click"))
         .on("contextmenu", function() { d3.event.preventDefault(); })

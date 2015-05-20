@@ -18,7 +18,7 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="page-header">
+            <div class="page-header col-md-12">
                 <h2>
                     <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
                     Dijkstra Explorer
@@ -45,87 +45,91 @@
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="graph-tab">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="well">
-                                    <h4>routing</h4>
-                                    <form>
-                                        <div class="form-group">
-                                            <label for="from">from</label>
-                                            <select id="from" class="form-control"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="to">to</label>
-                                            <select id="to" class="form-control"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <button type="button" class="btn btn-warning" data-toggle="tooltip" 
-                                            data-placement="right" title="find shortest path between nodes" 
-                                            onclick="clearGraph()">clear</button>
-                                            <button type="button" class="btn btn-primary" data-toggle="tooltip" 
-                                            data-placement="right" title="find shortest path between nodes" 
-                                            onclick="findRoute()">route</button>
-                                        </div>
-                                    </form>
+                        <div class="de-container">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="well">
+                                        <h4>routing</h4>
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="from">from</label>
+                                                <select id="from" class="form-control"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="to">to</label>
+                                                <select id="to" class="form-control"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-warning" data-toggle="tooltip" 
+                                                data-placement="right" title="find shortest path between nodes" 
+                                                onclick="clearGraph()">clear</button>
+                                                <button type="button" class="btn btn-primary" data-toggle="tooltip" 
+                                                data-placement="right" title="find shortest path between nodes" 
+                                                onclick="findRoute()">route</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="results well">
+                                        <table class="table">
+                                            <tr>
+                                                <th class="info">nodes</th>
+                                                <td id="node-count">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="info">paths</th>
+                                                <td id="path-count">-</td>
+                                            </tr>
+                                        </table>
+                                        <div id="results" class="well"></div>
+                                    </div>
+                                    <div class="well">
+                                        <h4>Instructions</h4>
+                                        <ul>
+                                            <li>double-click to add a node</li>
+                                            <li>drag nodes to reposition them</li>
+                                            <li>right-click on a node
+                                                then right-click on another to 
+                                                link them
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="results well">
-                                    <table class="table">
-                                        <tr>
-                                            <th class="info">nodes</th>
-                                            <td id="node-count">-</td>
-                                        </tr>
-                                        <tr>
-                                            <th class="info">paths</th>
-                                            <td id="path-count">-</td>
-                                        </tr>
-                                    </table>
-                                    <div id="results" class="well"></div>
-                                </div>
-                                <div class="well">
-                                    <h4>Instructions</h4>
-                                    <ul>
-                                        <li>double-click to add a node</li>
-                                        <li>drag nodes to reposition them</li>
-                                        <li>right-click on a node
-                                            then right-click on another to 
-                                            link them
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div id="graph"></div>
+                                <div class="col-md-9">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <div id="graph"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div><!-- /container -->
+                    </div><!-- / graph tabpanel -->
                     <div role="tabpanel" class="tab-pane" id="data-tab">
-                        <div class="panel">
-                            <div class="container">
-                                <div class="bs-callout borderless text-right">
-                                    <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
-                                        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-                                        export
-                                    </button>
-                                    <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
-                                        <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-                                        import
-                                    </button>
-                                </div><!-- /bs-callout -->
-                                <div class="bs-callout bs-callout-info padding-medium"><h4>nodes</h4></div>
-                                <div id="nodes-table"></div>
-                                <div class="bs-callout bs-callout-info padding-medium"><h4>paths</h4></div>
-                                <div id="paths-table"></div>
-                                <div class="bs-callout bs-callout-info padding-medium"><h4>distances</h4></div>
-                                <div id="distances-table"></div>
-                            </div><!-- /container -->
+                        <div class="de-container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="bs-callout borderless text-right">
+                                        <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
+                                            <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+                                            export
+                                        </button>
+                                        <button type="button" class="datamgr btn btn-default btn-lg" data-toggle="popover" data-placement="bottom" data-content="coming soon">
+                                            <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+                                            import
+                                        </button>
+                                    </div><!-- /bs-callout -->
+                                    <div class="bs-callout bs-callout-info padding-medium"><h4>nodes</h4></div>
+                                    <div id="nodes-table"></div>
+                                    <div class="bs-callout bs-callout-info padding-medium"><h4>paths</h4></div>
+                                    <div id="paths-table"></div>
+                                    <div class="bs-callout bs-callout-info padding-medium"><h4>distances</h4></div>
+                                    <div id="distances-table"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </div><!-- / data tabpanel -->
+                </div><!-- /.tab-content -->
+            </div><!-- /tabpanel -->
         </div><!-- /rows -->
     </div><!-- /container -->
     <footer class="footer">
