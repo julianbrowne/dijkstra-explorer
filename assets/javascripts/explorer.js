@@ -142,6 +142,12 @@ function cleanUI() {
     $('#distances-table').empty();
 };
 
+function dataDownload() { 
+    /**
+        <p><a download="dijkstra-explorer.json" href='data:application/json,{"a":10}'>JSON</a></p>
+    **/
+}
+
 function redrawNodes() { 
 
     svg.selectAll("g.nodes").data([]).exit().remove();
