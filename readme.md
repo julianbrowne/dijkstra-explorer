@@ -17,3 +17,9 @@
 - Click 'clear' to begin again
 
 ![screenshot](screenshot.jpg)
+
+## todo
+
+- import and export data
+- dynamically recalculate shortest-path as node positions are dragged
+

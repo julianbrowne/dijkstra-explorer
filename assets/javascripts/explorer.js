@@ -42,11 +42,53 @@ function initUI() {
 
     updateStats();
 
-    var popovers = ".datamgr";
+    var popovers = ".datamgr.import";
 
     $(popovers).popover({ 
         delay: { show: 400, hide: 300 },
         trigger: "hover"
+    });
+
+    $(".datamgr.export").click(function(e) { 
+
+        e.stopPropagation()
+
+        var exportData = JSON.stringify({ 
+            nodes: data.nodes,
+            paths: data.paths
+        });
+
+        var target = $(this);
+
+        var link = $("<a></a>")
+            .addClass("exportLink")
+            .click(function(e) { e.stopPropagation(); })
+            .attr('target', '_self')
+            .attr("download", "dijkstra-explorer-data.json")
+            .attr("href", "data:application/json,"+exportData)
+
+        link.appendTo(target).get(0).click();
+
+        $(".exportLink").remove();
+
+        /**
+            <input type="file" id="file" name="file" enctype="multipart/form-data" />
+
+           document.getElementById('file').addEventListener('change', readFile, false);
+
+           function readFile (evt) {
+               var files = evt.target.files;
+               var file = files[0];           
+               var reader = new FileReader();
+               reader.onload = function() {
+                 console.log(this.result);            
+               }
+               reader.readAsText(file)
+            }
+
+        **/
+
+
     });
 
 };
@@ -141,12 +183,6 @@ function cleanUI() {
     $("#results").empty();
     $('#distances-table').empty();
 };
-
-function dataDownload() { 
-    /**
-        <p><a download="dijkstra-explorer.json" href='data:application/json,{"a":10}'>JSON</a></p>
-    **/
-}
 
 function redrawNodes() { 
 
