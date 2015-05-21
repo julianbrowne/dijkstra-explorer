@@ -15,11 +15,11 @@
 - Select target node id
 - Click 'route' button
 - Click 'clear' to begin again
+- Export and import graph data from the data tab
 
 ![screenshot](screenshot.jpg)
 
 ## todo
 
-- import and export data
 - dynamically recalculate shortest-path as node positions are dragged
 

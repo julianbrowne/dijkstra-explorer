@@ -71,24 +71,48 @@ function initUI() {
 
         $(".exportLink").remove();
 
-        /**
-            <input type="file" id="file" name="file" enctype="multipart/form-data" />
+    });
 
-           document.getElementById('file').addEventListener('change', readFile, false);
-
-           function readFile (evt) {
-               var files = evt.target.files;
-               var file = files[0];           
-               var reader = new FileReader();
-               reader.onload = function() {
-                 console.log(this.result);            
-               }
-               reader.readAsText(file)
+    $("#data-import").change(function(e) { 
+        e.stopPropagation();
+        var files = e.target.files;
+        var file = files[0];
+        if(file===undefined) return;
+        var reader = new FileReader();
+        reader.onload = function() { 
+            try { 
+                var importedData = JSON.parse(this.result);
+            }
+            catch (exception) { 
+                console.log("** Error importing JSON: %s", exception);
+                return;
+            }
+            if(    importedData.nodes === undefined
+                || importedData.paths === undefined
+                || Object.keys(importedData).length !== 2) { 
+                console.log("** JSON format error:");
+                console.log(importedData);
+                return;
             }
 
-        **/
+            //todo: refactor into initData(nodes,paths) and use for start-up too
 
+            data.nodes = importedData.nodes;
+            data.paths = importedData.paths;
+            data.distances = [];
+            data.state.selectedNode = null;
+            data.state.fromNode = null;
+            data.state.toNode = null;
 
+            data.nodes.forEach(function(node) { 
+                addNodeToSelect(node.name);
+            });
+
+            calculateDistances();
+            redrawLines();
+            redrawNodes();
+        }
+        reader.readAsText(file);
     });
 
 };
