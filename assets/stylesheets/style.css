@@ -13,9 +13,8 @@ body {
 
 button:focus {outline:0 !important;}
 
-.graph { 
-    /**background-image: url("../../assets/images/map.png");**/
-    background-repeat: no-repeat;
+#graph { 
+    background-repeat: no-repeat !important;
     overflow: hidden;
 }
 

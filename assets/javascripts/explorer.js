@@ -66,7 +66,11 @@ function initUI() {
         reader.onload = function() { 
             //var img = $("<img>");
             //img.attr("src", this.result);
-            $("#graph").css("background", "url("+this.result+")");
+            $("#graph")
+                .css({ 
+                    "background-image": "url("+this.result+")",
+                    "background-repeat": "no-repeat"
+                });
         };
         reader.onprogress = function(e) { 
             var pc = Math.round((e.loaded / e.total) * 100);
