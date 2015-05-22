@@ -42,7 +42,7 @@ function initUI() {
 
     updateStats();
 
-    $(".datamgr.export").click(function(e) { 
+    $(".datamgr .export").click(function(e) { 
 
         e.stopPropagation()
 
@@ -66,7 +66,7 @@ function initUI() {
 
     });
 
-    $("#data-import").change(function(e) { 
+    $(".datamgr .import").change(function(e) { 
         e.stopPropagation();
         var files = e.target.files;
         var file = files[0];
