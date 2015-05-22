@@ -42,13 +42,6 @@ function initUI() {
 
     updateStats();
 
-    var popovers = ".datamgr.import";
-
-    $(popovers).popover({ 
-        delay: { show: 400, hide: 300 },
-        trigger: "hover"
-    });
-
     $(".datamgr.export").click(function(e) { 
 
         e.stopPropagation()
