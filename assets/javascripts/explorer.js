@@ -42,9 +42,42 @@ function initUI() {
 
     updateStats();
 
+    $(".graph-bg").submit(function(e) { 
+        e.stopPropagation();
+        e.preventDefault();
+        var url = $("#graph-bg-url").val();
+        if(url) { 
+            if(!setGraphBGToURL(url)) $("#graph-bg-url").val("");
+        }
+    });
+
+    $("#graph-bg-file").change(function(e) { 
+        e.stopPropagation();
+        e.preventDefault();
+        var files = e.target.files;
+        var file = files[0];
+        var imageType = /image.*/;
+        if(file===undefined||!file.type.match(imageType)) { 
+            info("** No valid image selected");
+            return;
+        };
+        info("loading file "+file.name+": "+file.size+" bytes");
+        var reader = new FileReader();
+        reader.onload = function() { 
+            //var img = $("<img>");
+            //img.attr("src", this.result);
+            $("#graph").css("background", "url("+this.result+")");
+        };
+        reader.onprogress = function(e) { 
+            var pc = Math.round((e.loaded / e.total) * 100);
+            info("loading file "+file.name+": "+pc+" %");
+        };
+        reader.readAsDataURL(file);
+    });
+
     $(".datamgr .export").click(function(e) { 
 
-        e.stopPropagation()
+        e.stopPropagation();
 
         var exportData = JSON.stringify({ 
             nodes: data.nodes,
@@ -114,6 +147,15 @@ function nullEventHandler(name) {
     return function() { 
         //console.log(name);
     };
+};
+
+function setGraphBGToURL(url) { 
+    console.log(url);
+    if(url===undefined||url===null||!/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url)) { 
+        console.log("invalid url");
+        return false;
+    }
+    $("#graph").css("background", "url("+url+")");
 };
 
 function findRoute() { 
