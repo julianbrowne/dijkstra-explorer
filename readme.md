@@ -19,7 +19,3 @@
 
 ![screenshot](screenshot.jpg)
 
-## todo
-
-- dynamically recalculate shortest-path as node positions are dragged
-
