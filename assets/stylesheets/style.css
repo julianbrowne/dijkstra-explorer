@@ -6,8 +6,8 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    color: #797979;
-    background: #eeeeee;
+    color: #5F5F5F;
+    background: #FAF5E6;
     font-family: helvetica;
 }
 
@@ -16,6 +16,19 @@ button:focus {outline:0 !important;}
 #graph { 
     background-repeat: no-repeat !important;
     overflow: hidden;
+}
+
+.nav-tabs>li>a { 
+    color: #5F5F5F; /*#E6E6E6;*/
+    background: #C0C0C0;
+}
+
+.page-header {
+    border-bottom: none;
+}
+
+.log.well { 
+    padding: 9px;
 }
 
 .de-container { 
