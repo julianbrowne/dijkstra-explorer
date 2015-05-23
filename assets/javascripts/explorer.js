@@ -175,7 +175,7 @@ function findRoute() {
 function printResults(results) { 
     var target = document.getElementById("results");
     while (target.hasChildNodes()) target.removeChild(target.lastChild);
-    var title = document.createElement("h4");
+    var title = document.createElement("p");
     title.innerHTML = "Route from " + results.source + " to " + results.target;
     var summary = document.createElement("p");
     summary.innerHTML = "Found route: " + results.mesg;
@@ -364,7 +364,8 @@ function dragNode() {
         calculateDistances();
         redrawLines();
         redrawNodes();
-    }
+        findRoute();
+    };
 };
 
 function dragNodeEnd() { 
