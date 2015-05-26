@@ -28,6 +28,8 @@ button:focus {outline:0 !important;}
 }
 
 .log.well { 
+    border: none;
+    background: #F5F5F0;
     padding: 9px;
 }
 

@@ -13,9 +13,10 @@ circle {
 }
 
 line { 
-    stroke: #1E1E1E;
+    stroke: #A9A9A9;
     stroke-dasharray: 5,5;
     stroke-width: 2;
+    cursor: pointer;
 }
 
 line.shortest { 
@@ -24,7 +25,8 @@ line.shortest {
     stroke-width: 4;
 }
 
-.line-label { 
+text.line-label { 
     font-family: arial;
     stroke: #000000;
+    cursor: pointer;
 }

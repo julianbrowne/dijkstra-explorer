@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -13,7 +12,14 @@
     <script type="text/javascript" src="assets/javascripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="assets/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/javascripts/d3.v3.min.js"></script>
-    <script type="text/javascript" src="assets/javascripts/explorer.js"></script>
+    <script type="text/javascript" src="assets/javascripts/sp.js"></script>
+    <script type="text/javascript" src="assets/javascripts/sp.ui.js"></script>
+    <script>
+        $(function() { 
+            sp.setGraph("#graph");
+            sp.init();
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -46,12 +52,12 @@
                 </span>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active">
-                        <a href="#graph-tab" aria-controls="home" role="tab" data-toggle="tab">
+                        <a href="#graph-tab" id="graph-tab-trigger" aria-controls="home" role="tab" data-toggle="tab">
                             Graph
                         </a>
                     </li>
                     <li role="presentation">
-                        <a href="#data-tab" aria-controls="profile" role="tab" data-toggle="tab">
+                        <a href="#data-tab" id="data-tab-trigger" aria-controls="profile" role="tab" data-toggle="tab">
                             Data
                         </a>
                     </li>
@@ -74,14 +80,12 @@
                                             </div>
                                             <div class="form-group btn-group">
                                                 <button
-                                                    type="button" class="btn btn-warning" 
+                                                    type="button" class="clear-graph btn btn-warning" 
                                                     data-toggle="tooltip" data-placement="right" 
-                                                    title="clear the graph"
-                                                    onclick="clearGraph()">clear</button>
-                                                <button type="button" class="btn btn-primary" 
+                                                    title="clear the graph">clear</button>
+                                                <button type="button" class="route btn btn-primary" 
                                                     data-toggle="tooltip" data-placement="right" 
-                                                    title="find shortest path between nodes" 
-                                                    onclick="findRoute()">route</button>
+                                                    title="find shortest path between nodes">route</button>
                                             </div>
                                         </form>
                                     </div>
