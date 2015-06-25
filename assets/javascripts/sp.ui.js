@@ -79,15 +79,15 @@ var output = {
                 }
                 sp.initData(importedData.nodes, importedData.paths);
                 output.log("Imported " + sp.data.nodes.length + " nodes and " + sp.data.paths.length + " paths");
-                redrawLines();
-                redrawNodes();
+                sp.redrawLines();
+                sp.redrawNodes();
             }
             reader.readAsText(file);
         });
 
     },
 
-    events: function() { 
+    events: function() {
         $("#data-tab-trigger").on('shown.bs.tab', function (e) { 
             // e.target // newly activated tab
             // e.relatedTarget // previous active tab
