@@ -52,7 +52,12 @@ var output = {
             };
             output.log("loading file "+file.name+": "+file.size+" bytes");
             var reader = new FileReader();
-            reader.onload = function() { $("#graph").css({ "background-image": "url("+this.result+")" }); };
+
+            reader.onload = function() { 
+                $("#graph").css({ "background-image": "url("+this.result+")" });
+                output.setScrollOnBackground();
+            };
+
             reader.onprogress = function(e) { 
                 var pc = Math.round((e.loaded / e.total) * 100);
                 output.log("loading file "+file.name+": "+pc+" %");
@@ -84,6 +89,23 @@ var output = {
             }
             reader.readAsText(file);
         });
+
+    },
+
+    setScrollOnBackground: function() { 
+
+        var image_url = $('#graph').css('background-image').match(/^url\("?(.+?)"?\)$/);
+
+        if (image_url[1]) { 
+            image_url = image_url[1];
+            var image = new Image();
+            $(image).load(function () { 
+                $('#graph').width(image.width);
+                $('#graph').height(image.height);
+                $('#graph-container').css("overflow", "auto");
+            });
+            image.src = image_url;
+        }
 
     },
 

@@ -13,13 +13,17 @@ body {
 
 button:focus {outline:0 !important;}
 
+#graph-container { 
+    width:800px;
+    height: 800px;
+}
+
 #graph { 
     background-repeat: no-repeat !important;
-    overflow: hidden;
 }
 
 .nav-tabs>li>a { 
-    color: #5F5F5F; /*#E6E6E6;*/
+    color: #5F5F5F;
     background: #C0C0C0;
 }
 

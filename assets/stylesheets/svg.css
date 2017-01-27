@@ -1,4 +1,8 @@
 
+svg {
+    overflow: auto;
+}
+
 circle { 
     fill: #61A4C2;
     stroke: #141C25;
