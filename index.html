@@ -43,6 +43,17 @@
             <div role="tabpanel">
                 <span class="form-inline pull-right">
                     <form class="graph-bg form-inline">
+
+                        <div class="input-group">
+                            <input class="form-control" type="number" min="10" max="50" id="node-radius" name="node-radius">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" id="set-node-radius">
+                                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                        </div>
+                        &nbsp;
+                        &nbsp;
                         <label for="graph-bg-url">background: </label>
                         <input class="form-control" placeholder="url" type="text" id="graph-bg-url" name="graph-bg-url"> or 
                         <span class="datamgr btn btn-default btn-sm btn-file glyphicon glyphicon-picture">
@@ -99,6 +110,17 @@
                                             <tr>
                                                 <th class="info">paths</th>
                                                 <td id="path-count">-</td>
+                                            </tr>
+                                            <tr role="separator" class="divider">
+                                                <th></th><td></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="info">width</th>
+                                                <td id="svg-width">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="info">height</th>
+                                                <td id="svg-height">-</td>
                                             </tr>
                                         </table>
                                     </div>
