@@ -43,22 +43,24 @@
             <div role="tabpanel">
                 <span class="form-inline pull-right">
                     <form class="graph-bg form-inline">
-
                         <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">
+                                <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                            </span>
                             <input class="form-control" type="number" min="10" max="50" id="node-radius" name="node-radius">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" id="set-node-radius">
-                                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                                </button>
+                        </div>
+                        <label for="graph-bg-url">background: </label>
+                        <div class="input-group">
+                            <input class="form-control" placeholder="url" type="text" id="graph-bg-url" name="graph-bg-url">
+                            <span id="submit-graph-bg-url" class="input-group-addon" id="basic-addon1">
+                                <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
                             </span>
                         </div>
-                        &nbsp;
-                        &nbsp;
-                        <label for="graph-bg-url">background: </label>
-                        <input class="form-control" placeholder="url" type="text" id="graph-bg-url" name="graph-bg-url"> or 
-                        <span class="datamgr btn btn-default btn-sm btn-file glyphicon glyphicon-picture">
-                            file<input type="file" class="bg form-control" id="graph-bg-file" name="graph-bg-file" enctype="multipart/form-data">
-                        </span>
+                        <div class="input-group">
+                            <span class="datamgr btn btn-default btn-sm btn-file glyphicon glyphicon-open-file">
+                                <input type="file" class="bg form-control" id="graph-bg-file" name="graph-bg-file" enctype="multipart/form-data">
+                            </span>
+                        </div>
                     </form>
                 </span>
                 <ul class="nav nav-tabs" role="tablist">

@@ -9,7 +9,8 @@ var UI = (function() {
         statsSVGWidth: "#svg-width",
         statsSVGHeight: "#svg-height",
         inputNodeRadius: "#node-radius",
-        buttonSetNodeRadius: "#set-node-radius"
+        buttonSetNodeRadius: "#set-node-radius",
+        submitNewGraphBgUrl: "#submit-graph-bg-url"
     };
 
     function buttonAction(tag, event, action) { 
@@ -38,7 +39,7 @@ var UI = (function() {
             updateSVGStats();
         });
 
-        buttonAction(".graph-bg", "submit", function(e) { 
+        buttonAction(tags.submitNewGraphBgUrl, "click", function(e) { 
             setGraphBGToURL($("#graph-bg-url").val());
         });
 
