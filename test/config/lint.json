@@ -1,0 +1,10 @@
+{
+  "eslintConfig": {
+    "env": {
+      "node": false
+    },
+    "rules": {
+      "no-trailing-spaces": 0
+    }
+  }
+}
