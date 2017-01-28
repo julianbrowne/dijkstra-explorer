@@ -1,0 +1,10 @@
+
+HOME=$(dirname $0)/..
+
+eslint \
+	-c ${HOME}/test/package.json            \
+	--no-eslintrc                           \
+	-o ${HOME}/test/reports/lint.output.txt \
+	--debug                                 \
+	${HOME}/assets/javascripts/sp.js        \
+	${HOME}/assets/javascripts/sp.ui.js

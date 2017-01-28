@@ -1,35 +1,48 @@
 
-var output = { 
+var UI = (function() { 
 
-    tags: { 
+    var tags = { 
         inputSelectSourceNode: "#from",
-        inputSelectTargetNode: "#to"
-    },
+        inputSelectTargetNode: "#to",
+        statsNodeCount: "#node-count",
+        statsPathCount: "#path-count",
+        statsSVGWidth: "#svg-width",
+        statsSVGHeight: "#svg-height",
+        inputNodeRadius: "#node-radius",
+        buttonSetNodeRadius: "#set-node-radius"
+    };
 
-    buttonAction: function(tag, event, action) { 
+    function buttonAction(tag, event, action) { 
         $(tag).on(event, function(e) { 
             e.stopPropagation();
             e.preventDefault();
             action.call(this, e);
         });
-    },
+    };
 
-    buttons: function() { 
+    function initButtons() { 
 
-        this.buttonAction("button.route", "click", function(e) { 
+        buttonAction("button.route", "click", function(e) { 
             sp.calculateDistances(false);
             sp.findRoute();
         });
 
-        this.buttonAction("button.clear-graph", "click", function(e) { 
+        buttonAction("button.clear-graph", "click", function(e) { 
             sp.clearGraph();
         });
 
-        this.buttonAction(".graph-bg", "submit", function(e) { 
-            output.setGraphBGToURL($("#graph-bg-url").val());
+        buttonAction(tags.inputNodeRadius, "change", function(e) { 
+            var newRadius = $(tags.inputNodeRadius).val();
+            sp.setNodeRadius(newRadius);
+            sp.defaults.nodeRadius = newRadius;
+            updateSVGStats();
         });
 
-        this.buttonAction(".datamgr .export", "click", function(e) { 
+        buttonAction(".graph-bg", "submit", function(e) { 
+            setGraphBGToURL($("#graph-bg-url").val());
+        });
+
+        buttonAction(".datamgr .export", "click", function(e) { 
             var exportData = JSON.stringify({ nodes: sp.data.nodes, paths: sp.data.paths });
             var target = $(this);
             var link = $("<a></a>")
@@ -37,62 +50,82 @@ var output = {
                 .click(function(e) { e.stopPropagation(); })
                 .attr('target', '_self')
                 .attr("download", "dijkstra-explorer-data.json")
-                .attr("href", "data:application/json,"+exportData)
+                .attr("href", "data:application/json," + exportData)
             link.appendTo(target).get(0).click();
             $(".exportLink").remove();
         });
 
-        this.buttonAction("#graph-bg-file", "change", function(e) { 
+        buttonAction("#graph-bg-file", "change", function(e) { 
+
             var files = e.target.files;
             var file = files[0];
             var imageType = /image.*/;
-            if(file===undefined||!file.type.match(imageType)) { 
-                output.log("** No valid image selected");
+
+            if(file===undefined || !file.type.match(imageType)) { 
+                log("** No valid image selected");
                 return;
             };
-            output.log("loading file "+file.name+": "+file.size+" bytes");
+
+            log("loading file " + file.name + ": " + file.size + " bytes");
+
             var reader = new FileReader();
 
             reader.onload = function() { 
-                $("#graph").css({ "background-image": "url("+this.result+")" });
-                output.setScrollOnBackground();
+                setGraphBackgroundImage(reader.result);
             };
 
             reader.onprogress = function(e) { 
                 var pc = Math.round((e.loaded / e.total) * 100);
-                output.log("loading file "+file.name+": "+pc+" %");
+                log("loading file "+file.name+": "+pc+" %");
             };
+
             reader.readAsDataURL(file);
         });
 
-        this.buttonAction(".datamgr .import", "change", function(e) { 
+        buttonAction(".datamgr .import", "change", function(e) { 
+
             var files = e.target.files;
             var file = files[0];
+
             if(file===undefined) return;
+
             var reader = new FileReader();
+
             reader.onload = function() { 
+
                 try { 
-                    var importedData = JSON.parse(this.result);
+                    var importedData = JSON.parse(reader.result);
                 }
                 catch (exception) { 
-                    output.log("** Error importing JSON: " + exception);
+                    log("** Error importing JSON: " + exception);
                     return;
                 }
+
                 if(importedData.nodes === undefined||importedData.paths === undefined||Object.keys(importedData).length !== 2) { 
-                    output.log("** JSON format error");
+                    log("** JSON format error");
                     return;
                 }
+
                 sp.initData(importedData.nodes, importedData.paths);
-                output.log("Imported " + sp.data.nodes.length + " nodes and " + sp.data.paths.length + " paths");
+                log("Imported " + sp.data.nodes.length + " nodes and " + sp.data.paths.length + " paths");
                 sp.redrawLines();
                 sp.redrawNodes();
             }
             reader.readAsText(file);
         });
 
-    },
+    }
 
-    setScrollOnBackground: function() { 
+    function setScrollOnBackground() { 
+
+        getBackgroundImageDimensions(function(width, height) { 
+            $('#graph').width(width);
+            $('#graph').height(height);
+            $('#graph-container').css("overflow", "auto");
+        });
+    }
+
+    function getBackgroundImageDimensions(callback) { 
 
         var image_url = $('#graph').css('background-image').match(/^url\("?(.+?)"?\)$/);
 
@@ -100,70 +133,88 @@ var output = {
             image_url = image_url[1];
             var image = new Image();
             $(image).load(function () { 
-                $('#graph').width(image.width);
-                $('#graph').height(image.height);
-                $('#graph-container').css("overflow", "auto");
+                callback(image.width, image.height);
             });
             image.src = image_url;
         }
 
-    },
+    }
 
-    events: function() {
+    function initEvents() { 
+
         $("#data-tab-trigger").on('shown.bs.tab', function (e) { 
-            // e.target // newly activated tab
+            // e.target        // newly activated tab
             // e.relatedTarget // previous active tab
-            output.displayPaths(sp.data.paths);
-            output.displayNodes(sp.data.nodes);
-            output.displayDistances(sp.data.distances);
+            displayPaths(sp.data.paths);
+            displayNodes(sp.data.nodes);
+            displayDistances(sp.data.distances);
         });
-    },
 
-    addNodeToSelect: function (nodeIndex) { 
-        $(this.tags.inputSelectSourceNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
-        $(this.tags.inputSelectTargetNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
-    },
+    }
 
-    cleanUI: function () { 
-        $(this.tags.inputSelectSourceNode).empty();
-        $(this.tags.inputSelectTargetNode).empty();
+    function addNodeToSelect(nodeIndex) { 
+        $(tags.inputSelectSourceNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
+        $(tags.inputSelectTargetNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
+    }
+
+    function clear() { 
+        $(tags.inputSelectSourceNode).empty();
+        $(tags.inputSelectTargetNode).empty();
         $("#results").empty();
         $('#distances-table').empty();
-    },
+    }
 
-    getSelectedSourceAndTarget: function() { 
-        if(!$(this.tags.inputSelectSourceNode).val()||!$(this.tags.inputSelectTargetNode).val())
+    function getSelectedSourceAndTarget() { 
+        if(!$(tags.inputSelectSourceNode).val()||!$(tags.inputSelectTargetNode).val())
             return false;
-        var sourceNode = $(this.tags.inputSelectSourceNode).val();
-        var targetNode = $(this.tags.inputSelectTargetNode).val();
+        var sourceNode = $(tags.inputSelectSourceNode).val();
+        var targetNode = $(tags.inputSelectTargetNode).val();
         return { source: sourceNode, target: targetNode};
-    },
+    }
 
-    setGraphBGToURL: function (url) { 
+    function setGraphBGToURL(url) { 
+
         if(url===undefined||url===null||!(/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url))) { 
             console.log("invalid url");
             return false;
         }
-        $("#graph").css("background", "url("+url+")");
-    },
 
-    displayPaths: function(pathData) { 
+        setGraphBackgroundImage(url);
+
+    }
+
+    function setGraphBackgroundImage(url) { 
+        $("#graph").css({ "background-image": "url(" + url + ")" });
+        setScrollOnBackground();
+        resizeSVG();
+    }
+
+    function resizeSVG() { 
+        getBackgroundImageDimensions(function(width, height) { 
+            log("setting graph dimensions to " + width + "px x " + height + "px");
+            sp.svg.attr("width", width).attr("height", height);
+            updateSVGStats();
+        });
+    }
+
+    function displayPaths(pathData) { 
         if(pathData.length===0) { 
             $("#paths-table").html("<p>no paths</p>");
             return;
         }
-        $("#paths-table").html(this.drawDataTable(pathData));
-    },
+        $("#paths-table").html(drawDataTable(pathData));
+    }
 
-    displayNodes: function(nodeData) { 
+    function displayNodes(nodeData) { 
         if(nodeData.length===0) { 
             $("#nodes-table").html("<p>no nodes</p>");
             return;
         }
-        $("#nodes-table").html(this.drawDataTable(nodeData));
-    },
+        $("#nodes-table").html(drawDataTable(nodeData));
+    }
 
-    drawDataTable: function(dataArray) { 
+    function drawDataTable(dataArray) { 
+
         var table = $("<table></table>")
             .addClass("table")
             .addClass("table-bordered")
@@ -194,23 +245,27 @@ var output = {
             normalRow.appendTo(table);
         });
         return table;
-    },
+    }
 
-    displayDistances: function (distanceData) { 
+    function displayDistances(distanceData) { 
+
         if(distanceData.length===0) { 
             $('#distances-table').html("no distances");
             return;
         }
+
         var table = $("<table></table>")
             .addClass("table")
             .addClass("table-bordered")
             .addClass("table-condensed")
             .addClass("auto-width");
+
         var headerRow = $("<tr></tr>");
         var cell = $("<th>node</th>");
         cell.addClass("text-center")
         cell.addClass("bg-muted");
         cell.appendTo(headerRow);
+
         for(var th=0; th<distanceData.length; th++) { 
             var cell = $("<th></th>");
             cell.addClass("text-center")
@@ -219,7 +274,9 @@ var output = {
             cell.html(th);
             cell.appendTo(headerRow);
         };
+
         headerRow.appendTo(table);
+
         for(var source=0; source<distanceData.length; source++) { 
             var normalRow = $("<tr></tr>");
             for(var target=0; target<distanceData.length;target++) { 
@@ -239,10 +296,13 @@ var output = {
             };
             normalRow.appendTo(table);
         };
-        $('#distances-table').html(table);
-    },
 
-    displayResults: function(results, distanceData) { 
+        $('#distances-table').html(table);
+
+    }
+
+    function displayResults(results, distanceData) { 
+
         d3.selectAll("line")
             .classed({"shortest": false});
         var target = $("#results");
@@ -271,15 +331,36 @@ var output = {
         target.append(summary);
         target.append(pathList);
         target.append(distance);
-    },
+    }
 
-    updateStats: function(nodeData, pathData) { 
-        $("#node-count").html(nodeData.length);
-        $("#path-count").html(pathData.length);
-    },
+    function updateStats(nodeData, pathData) { 
+        $(tags.statsNodeCount).html(nodeData.length);
+        $(tags.statsPathCount).html(pathData.length);
+        updateSVGStats();
+    }
 
-    log: function(text) { 
+    function updateSVGStats() { 
+        if(sp.svg) { 
+            $(tags.statsSVGWidth).html(sp.svg.attr("width"));
+            $(tags.statsSVGHeight).html(sp.svg.attr("height"));
+            $(tags.inputNodeRadius).val(sp.getNodeRadius());
+
+        }
+    }
+
+    function log(text) { 
         $("#info").html(text);
     }
 
-};
+    return { 
+        initButtons: initButtons,
+        initEvents: initEvents,
+        updateStats: updateStats,
+        addNodeToSelect: addNodeToSelect,
+        getSelectedSourceAndTarget: getSelectedSourceAndTarget,
+        displayResults: displayResults,
+        clear: clear,
+        log: log
+    }
+
+}($));

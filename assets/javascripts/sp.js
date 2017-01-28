@@ -5,6 +5,10 @@ var sp = {
     svg: null,
     data: {},
 
+    defaults: { 
+        nodeRadius: 20
+    },
+
     setGraph: function(id) { 
         if(typeof(d3)==="undefined") throw("** d3 library not found");
         this.graph = d3.select(id);
@@ -18,10 +22,10 @@ var sp = {
     },
 
     findRoute: function() { 
-        var nodes = output.getSelectedSourceAndTarget();
+        var nodes = UI.getSelectedSourceAndTarget();
         var results = sp.dijkstra(nodes.source, nodes.target);
         this.data.state.routeInProgress = (results.success) ? true : false;
-        output.displayResults(results, this.data.distances);
+        UI.displayResults(results, this.data.distances);
     },
 
     initData: function(nodeData, pathData) { 
@@ -34,7 +38,7 @@ var sp = {
         this.data.state.toNode = null;
         this.data.state.routeInProgress = false;
         this.calculateDistances(true);
-        nodeData.forEach(function(node) { output.addNodeToSelect(node.name); });
+        nodeData.forEach(function(node) { UI.addNodeToSelect(node.name); });
     },
 
     calculateDistances: function(reinitialise) { 
@@ -62,32 +66,46 @@ var sp = {
 
     clearGraph: function() { 
         this.initData([], []);
-        output.cleanUI();
+        UI.clear();
         sp.redrawGraph();
-        output.updateStats(this.data.nodes, this.data.paths);
-        output.log("cleared graph");
+        UI.updateStats(this.data.nodes, this.data.paths);
+        UI.log("cleared graph");
     },
 
     addNode: function() { 
         if (d3.event.defaultPrevented) return;
         var position = d3.mouse(this);
         var nodeName = sp.data.nodes.length;
-        output.log("Adding node " + nodeName);
+        UI.log("Adding node " + nodeName);
         sp.data.nodes.push({ 
             name: nodeName,
             x: parseInt(position[0]), 
             y: parseInt(position[1])
         });
         sp.redrawNodes();
-        output.addNodeToSelect(nodeName);
-        output.updateStats(sp.data.nodes, sp.data.paths);
+        UI.addNodeToSelect(nodeName);
+        UI.updateStats(sp.data.nodes, sp.data.paths);
     },
 
-    init: function() { 
+    getNodeRadius: function() { 
+        var nodes = sp.svg.selectAll("g.nodes");
+        return (nodes[0].length > 0) ? nodes.select("circle").attr("r") : sp.defaults.nodeRadius;
+    },
+
+    setNodeRadius: function(radius) { 
+        sp.svg
+            .selectAll("g.nodes")
+                .selectAll("circle")
+                    .attr("r", radius);
+    },
+
+    init: function() {  
+
         this.initData([], []);
-        output.buttons();       // initialise all button clicks etc
-        output.events();        // initialise DOM event handlers
-        output.updateStats(this.data.nodes, this.data.paths);
+
+        UI.initButtons();
+        UI.initEvents();
+        UI.updateStats(this.data.nodes, this.data.paths);
     },
 
     dragManager: d3.behavior.drag().on('drag', function(d, i) { 
@@ -98,7 +116,7 @@ var sp = {
             x: parseInt(position[0]), 
             y: parseInt(position[1])
         };
-        output.log("node "+i+" at ["+parseInt(position[0])+","+parseInt(position[1])+"]");
+        UI.log("node "+i+" at ["+parseInt(position[0])+","+parseInt(position[1])+"]");
         sp.data.nodes[i] = nodeDatum;
         sp.calculateDistances(false);
         sp.redrawGraph();
@@ -118,7 +136,7 @@ var sp = {
         nodesEnter
             .append("circle")
                 .attr("nodeId", function(d,i) {return i;})
-                .attr("r", '20')
+                .attr("r", this.defaults.nodeRadius)
                 .attr("class", "node")
                 .style("cursor", "pointer")
                 .on('click', function(d,i) { 
@@ -173,15 +191,15 @@ var sp = {
         d3.event.stopPropagation();
         d3.event.preventDefault();
         if(sp.data.state.fromNode===null) { 
-            output.log("setting start node "+index+" in join");
+            UI.log("setting start node "+index+" in join");
             sp.data.state.fromNode = index;
         }
         else { 
             if(sp.data.state.fromNode===index) { 
-                output.log("ignoring end node "+index+" as same as start node");
+                UI.log("ignoring end node "+index+" as same as start node");
                 return;
             }
-            output.log("setting join from "+sp.data.state.fromNode+" to "+index);
+            UI.log("setting join from "+sp.data.state.fromNode+" to "+index);
             sp.data.state.toNode = index;
             var pathDatum = { 
                 id: sp.data.paths.length,
@@ -191,7 +209,7 @@ var sp = {
             sp.data.paths.push(pathDatum);
             sp.calculateDistances(true);
             sp.redrawGraph();
-            output.updateStats(sp.data.nodes, sp.data.paths);
+            UI.updateStats(sp.data.nodes, sp.data.paths);
             if(sp.data.state.routeInProgress) sp.findRoute();
             sp.data.state.fromNode = null;
             sp.data.state.toNode = null;

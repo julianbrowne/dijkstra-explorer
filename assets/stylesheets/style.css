@@ -14,7 +14,7 @@ body {
 button:focus {outline:0 !important;}
 
 #graph-container { 
-    width:800px;
+    width:850px;
     height: 800px;
 }
 
