@@ -11,6 +11,13 @@ var UI = (function() {
         inputNodeRadius: "#node-radius",
         buttonSetNodeRadius: "#set-node-radius",
 
+        buttonLoadExampleData: "#load-example",
+
+        exportDataButton: "#export-data-button",
+
+        importDataFileSelectButton: "#import-data-button",
+        importDataFileChooserInput: "#import-data-file-chooser",
+
         graphBackgroundUrlForm: "#graph-bg-url-form",
         graphBackgroundUrlChooserInput: "#graph-bg-url-chooser",
 
@@ -39,18 +46,34 @@ var UI = (function() {
             sp.clearGraph();
         });
 
+        /** Load Example Graph Data & Background Image **/
+
+        bindActionToElementEvent(selectors.buttonLoadExampleData, "click", function(e) { 
+
+            setGraphBGToURL("example/example-map.png", true);
+            setNodeRadius(10);
+
+            $.getJSON("example/example-data.json", function(data) { 
+                parsedData = parseGraphDataFile(data);
+                if(parsedData) { 
+                    loadDataIntoGraph(parsedData);
+                }
+            });
+
+        });
+
+        /** Change radius of map pin (node) circles **/
+
         bindActionToElementEvent(selectors.inputNodeRadius, "change", function(e) { 
             var newRadius = $(selectors.inputNodeRadius).val();
-            sp.setNodeRadius(newRadius);
-            sp.defaults.nodeRadius = newRadius;
-            updateSVGStats();
+            setNodeRadius(newRadius);
         });
 
         bindActionToElementEvent(selectors.graphBackgroundUrlForm, "submit", function(e) { 
             setGraphBGToURL($(selectors.graphBackgroundUrlChooserInput).val());
         });
 
-        bindActionToElementEvent(".datamgr .export", "click", function(e) { 
+        bindActionToElementEvent(selectors.exportDataButton, "click", function(e) { 
             var exportData = JSON.stringify({ nodes: sp.data.nodes, paths: sp.data.paths });
             var target = $(this);
             var link = $("<a></a>")
@@ -61,6 +84,34 @@ var UI = (function() {
                 .attr("href", "data:application/json," + exportData)
             link.appendTo(target).get(0).click();
             $(".exportLink").remove();
+        });
+
+        bindActionToElementEvent(selectors.importDataFileSelectButton, "click", function(e) { 
+            $(selectors.importDataFileChooserInput).val("");
+            $(selectors.importDataFileChooserInput).click();
+        });
+
+
+        bindActionToElementEvent(selectors.importDataFileChooserInput, "change", function(e) { 
+
+            var files = e.target.files;
+            var file = files[0];
+
+            if(file===undefined) return;
+
+            var reader = new FileReader();
+
+            reader.onload = function() { 
+
+                var graphData = parseGraphDataFile(reader.result);
+
+                if(graphData) { 
+                    loadDataIntoGraph(graphData);
+                }
+
+            }
+
+            reader.readAsText(file);
         });
 
         bindActionToElementEvent(selectors.graphBackgroundFileSelectButton, "click", function(e) { 
@@ -96,38 +147,39 @@ var UI = (function() {
             reader.readAsDataURL(file);
         });
 
-        bindActionToElementEvent(".datamgr .import", "change", function(e) { 
 
-            var files = e.target.files;
-            var file = files[0];
+    }
 
-            if(file===undefined) return;
+    function parseGraphDataFile(rawData) { 
 
-            var reader = new FileReader();
+        try { 
+            var importedData = JSON.parse(rawData);
+        }
+        catch (exception) { 
+            log("** Error importing JSON: " + exception);
+            return null;
+        }
 
-            reader.onload = function() { 
+        if(importedData.nodes === undefined||importedData.paths === undefined||Object.keys(importedData).length !== 2) { 
+            log("** JSON format error");
+            return null;
+        }
 
-                try { 
-                    var importedData = JSON.parse(reader.result);
-                }
-                catch (exception) { 
-                    log("** Error importing JSON: " + exception);
-                    return;
-                }
+        return importedData;
 
-                if(importedData.nodes === undefined||importedData.paths === undefined||Object.keys(importedData).length !== 2) { 
-                    log("** JSON format error");
-                    return;
-                }
+    }
 
-                sp.initData(importedData.nodes, importedData.paths);
-                log("Imported " + sp.data.nodes.length + " nodes and " + sp.data.paths.length + " paths");
-                sp.redrawLines();
-                sp.redrawNodes();
-            }
-            reader.readAsText(file);
-        });
+    function setNodeRadius(radius) { 
+        sp.setNodeRadius(newRadius);
+        sp.defaults.nodeRadius = newRadius;
+        updateSVGStats();
+    }
 
+    function loadDataIntoGraph(data) { 
+        sp.initData(data.nodes, data.paths);
+        log("Imported " + sp.data.nodes.length + " nodes and " + sp.data.paths.length + " paths");
+        sp.redrawLines();
+        sp.redrawNodes();
     }
 
     function setScrollOnBackground() { 
@@ -186,9 +238,11 @@ var UI = (function() {
         return { source: sourceNode, target: targetNode};
     }
 
-    function setGraphBGToURL(url) { 
+    function setGraphBGToURL(url, local) { 
 
-        if(url===undefined||url===null||!(/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url))) { 
+        var local = local ? true : false;
+
+        if(local===false&&(url===undefined||url===null||!(/^([a-z]([a-z]|\d|\+|-|\.)*):(\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?((\[(|(v[\da-f]{1,}\.(([a-z]|\d|-|\.|_|~)|[!\$&'\(\)\*\+,;=]|:)+))\])|((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=])*)(:\d*)?)(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*|(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)|((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)){0})(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url)))) { 
             console.log("invalid url");
             return false;
         }
