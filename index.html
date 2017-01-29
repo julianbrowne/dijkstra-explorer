@@ -42,26 +42,34 @@
         <div class="row">
             <div role="tabpanel">
                 <span class="form-inline pull-right">
-                    <form class="graph-bg form-inline">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">
-                                <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                            </span>
-                            <input class="form-control" type="number" min="10" max="50" id="node-radius" name="node-radius">
-                        </div>
-                        <label for="graph-bg-url">background: </label>
-                        <div class="input-group">
-                            <input class="form-control" placeholder="url" type="text" id="graph-bg-url" name="graph-bg-url">
-                            <span id="submit-graph-bg-url" class="input-group-addon" id="basic-addon1">
-                                <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
-                            </span>
-                        </div>
-                        <div class="input-group">
-                            <span class="datamgr btn btn-default btn-sm btn-file glyphicon glyphicon-open-file">
-                                <input type="file" class="bg form-control" id="graph-bg-file" name="graph-bg-file" enctype="multipart/form-data">
-                            </span>
-                        </div>
+
+                    <!-- change map pin/node radius -->
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">
+                            <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                        </span>
+                        <input class="form-control" type="number" min="10" max="50" id="node-radius" name="node-radius">
+                    </div>
+
+                    <!-- change background image url radius -->
+                    <form id="graph-bg-url-form" class="form-inline">
+                    <div class="input-group">
+                        <span id="graph-bg-url-button" class="input-group-addon" id="basic-addon1">
+                            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+                        </span>
+                        <input id="graph-bg-url-chooser" class="form-control" type="text" name="graph-bg-url-chooser" placeholder="background image url" >
+                    </div>
                     </form>
+
+                    <!-- change background image file radius -->
+                    <div class="input-group">
+                        <span id="graph-bg-file-button" class="input-group-addon" id="basic-addon1">
+                            <span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>
+                        </span>
+                        <input id="graph-bg-file-chooser" class="form-control hidden" type="file" name="graph-bg-file"  enctype="multipart/form-data">
+                        <input id="graph-bg-filename" class="form-control" type="text" placeholder="background image file" readonly="">
+                    </div>
+
                 </span>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active">

@@ -13,6 +13,10 @@ body {
 
 button:focus {outline:0 !important;}
 
+#graph-bg-url-form {
+    display: inline;
+}
+
 #graph-container { 
     width:850px;
     height: 800px;

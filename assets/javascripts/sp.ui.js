@@ -1,7 +1,7 @@
 
 var UI = (function() { 
 
-    var tags = { 
+    var selectors = { 
         inputSelectSourceNode: "#from",
         inputSelectTargetNode: "#to",
         statsNodeCount: "#node-count",
@@ -10,11 +10,18 @@ var UI = (function() {
         statsSVGHeight: "#svg-height",
         inputNodeRadius: "#node-radius",
         buttonSetNodeRadius: "#set-node-radius",
-        submitNewGraphBgUrl: "#submit-graph-bg-url"
+
+        graphBackgroundUrlForm: "#graph-bg-url-form",
+        graphBackgroundUrlChooserInput: "#graph-bg-url-chooser",
+
+        graphBackgroundFileSelectButton: "#graph-bg-file-button",
+        graphBackgroundFileChooserInput: "#graph-bg-file-chooser",
+        graphBackgroundFileNameChosen: "#graph-bg-filename"
+
     };
 
-    function buttonAction(tag, event, action) { 
-        $(tag).on(event, function(e) { 
+    function bindActionToElementEvent(selector, event, action) { 
+        $(selector).on(event, function(e) { 
             e.stopPropagation();
             e.preventDefault();
             action.call(this, e);
@@ -23,27 +30,27 @@ var UI = (function() {
 
     function initButtons() { 
 
-        buttonAction("button.route", "click", function(e) { 
+        bindActionToElementEvent("button.route", "click", function(e) { 
             sp.calculateDistances(false);
             sp.findRoute();
         });
 
-        buttonAction("button.clear-graph", "click", function(e) { 
+        bindActionToElementEvent("button.clear-graph", "click", function(e) { 
             sp.clearGraph();
         });
 
-        buttonAction(tags.inputNodeRadius, "change", function(e) { 
-            var newRadius = $(tags.inputNodeRadius).val();
+        bindActionToElementEvent(selectors.inputNodeRadius, "change", function(e) { 
+            var newRadius = $(selectors.inputNodeRadius).val();
             sp.setNodeRadius(newRadius);
             sp.defaults.nodeRadius = newRadius;
             updateSVGStats();
         });
 
-        buttonAction(tags.submitNewGraphBgUrl, "click", function(e) { 
-            setGraphBGToURL($("#graph-bg-url").val());
+        bindActionToElementEvent(selectors.graphBackgroundUrlForm, "submit", function(e) { 
+            setGraphBGToURL($(selectors.graphBackgroundUrlChooserInput).val());
         });
 
-        buttonAction(".datamgr .export", "click", function(e) { 
+        bindActionToElementEvent(".datamgr .export", "click", function(e) { 
             var exportData = JSON.stringify({ nodes: sp.data.nodes, paths: sp.data.paths });
             var target = $(this);
             var link = $("<a></a>")
@@ -56,7 +63,12 @@ var UI = (function() {
             $(".exportLink").remove();
         });
 
-        buttonAction("#graph-bg-file", "change", function(e) { 
+        bindActionToElementEvent(selectors.graphBackgroundFileSelectButton, "click", function(e) { 
+            $(selectors.graphBackgroundFileChooserInput).val("");
+            $(selectors.graphBackgroundFileChooserInput).click();
+        });
+
+        bindActionToElementEvent(selectors.graphBackgroundFileChooserInput, "change", function(e) { 
 
             var files = e.target.files;
             var file = files[0];
@@ -68,6 +80,7 @@ var UI = (function() {
             };
 
             log("loading file " + file.name + ": " + file.size + " bytes");
+            $(selectors.graphBackgroundFileNameChosen).val(file.name);
 
             var reader = new FileReader();
 
@@ -83,7 +96,7 @@ var UI = (function() {
             reader.readAsDataURL(file);
         });
 
-        buttonAction(".datamgr .import", "change", function(e) { 
+        bindActionToElementEvent(".datamgr .import", "change", function(e) { 
 
             var files = e.target.files;
             var file = files[0];
@@ -154,22 +167,22 @@ var UI = (function() {
     }
 
     function addNodeToSelect(nodeIndex) { 
-        $(tags.inputSelectSourceNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
-        $(tags.inputSelectTargetNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
+        $(selectors.inputSelectSourceNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
+        $(selectors.inputSelectTargetNode).append($("<option></option>").attr("value",nodeIndex).text(nodeIndex));
     }
 
     function clear() { 
-        $(tags.inputSelectSourceNode).empty();
-        $(tags.inputSelectTargetNode).empty();
+        $(selectors.inputSelectSourceNode).empty();
+        $(selectors.inputSelectTargetNode).empty();
         $("#results").empty();
         $('#distances-table').empty();
     }
 
     function getSelectedSourceAndTarget() { 
-        if(!$(tags.inputSelectSourceNode).val()||!$(tags.inputSelectTargetNode).val())
+        if(!$(selectors.inputSelectSourceNode).val()||!$(selectors.inputSelectTargetNode).val())
             return false;
-        var sourceNode = $(tags.inputSelectSourceNode).val();
-        var targetNode = $(tags.inputSelectTargetNode).val();
+        var sourceNode = $(selectors.inputSelectSourceNode).val();
+        var targetNode = $(selectors.inputSelectTargetNode).val();
         return { source: sourceNode, target: targetNode};
     }
 
@@ -335,16 +348,16 @@ var UI = (function() {
     }
 
     function updateStats(nodeData, pathData) { 
-        $(tags.statsNodeCount).html(nodeData.length);
-        $(tags.statsPathCount).html(pathData.length);
+        $(selectors.statsNodeCount).html(nodeData.length);
+        $(selectors.statsPathCount).html(pathData.length);
         updateSVGStats();
     }
 
     function updateSVGStats() { 
         if(sp.svg) { 
-            $(tags.statsSVGWidth).html(sp.svg.attr("width"));
-            $(tags.statsSVGHeight).html(sp.svg.attr("height"));
-            $(tags.inputNodeRadius).val(sp.getNodeRadius());
+            $(selectors.statsSVGWidth).html(sp.svg.attr("width"));
+            $(selectors.statsSVGHeight).html(sp.svg.attr("height"));
+            $(selectors.inputNodeRadius).val(sp.getNodeRadius());
 
         }
     }
