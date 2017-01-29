@@ -170,8 +170,8 @@ var UI = (function() {
     }
 
     function setNodeRadius(radius) { 
-        sp.setNodeRadius(newRadius);
-        sp.defaults.nodeRadius = newRadius;
+        sp.setNodeRadius(radius);
+        sp.defaults.nodeRadius = radius;
         updateSVGStats();
     }
 
