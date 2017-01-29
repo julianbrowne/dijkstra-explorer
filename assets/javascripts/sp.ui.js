@@ -54,10 +54,7 @@ var UI = (function() {
             setNodeRadius(10);
 
             $.getJSON("example/example-data.json", function(data) { 
-                parsedData = parseGraphDataFile(data);
-                if(parsedData) { 
-                    loadDataIntoGraph(parsedData);
-                }
+                loadDataIntoGraph(data);
             });
 
         });
